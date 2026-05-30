@@ -1,4 +1,4 @@
-# WAF Test Tool
+# JXWAF Test
 
 面向 WAF（Web Application Firewall）防护能力的自动化测试工具。内置 **477 项测试用例**，覆盖 17 类攻击场景，支持并发执行并生成可视化 Markdown 报告。
 
