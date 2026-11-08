@@ -440,7 +440,7 @@ def generate_report(config: Config, results: List[TestResult],
         lines.append("| 分类 | 描述 | Payload | 状态码 |")
         lines.append("|------|------|---------|--------|")
         for r in unblocked_list:
-            payload_display = escape_md(truncate(r.payload, 200))
+            payload_display = escape_md(r.payload)
             if r.request_body:
                 payload_display += f" + Body: `{escape_md(truncate(r.request_body, 80))}`"
             lines.append(f"| {category_label(r.category)} | {r.description} | "
